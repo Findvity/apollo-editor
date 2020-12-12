@@ -126,10 +126,18 @@
 
 		saveButton.addEventListener("click", () => {
 			editor.save().then((savedData) => {
-				var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(savedData));
-				$('<a href="data:' + data + '" download="data.json">download JSON</a>');
+				function download(content, fileName, contentType) {
+				var a = document.createElement("a");
+				var file = new Blob([content], {type: contentType});
+				a.href = URL.createObjectURL(file);
+				a.download = fileName;
+				a.click();
+}
+download(JSON.stringify(savedData), 'file.json', 'text/plain');
 			});
 		});
+
+		
 
 		const doc = new jsPDF();
 
