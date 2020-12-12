@@ -1,0 +1,142 @@
+<html>
+	<style>
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+				"Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+			font-size: 14px;
+			line-height: 1.5em;
+		}
+	</style>
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<!-- <script src="jspdf.umd.min.js"></script> -->
+		<!-- <script src=”//mrrio.github.io/jsPDF/dist/jspdf.debug.js”></script> -->
+		<script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js" type="module"></script>
+
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+		<!-- Header -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/simple-image@latest"></script>
+		<!-- Image -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script>
+		<!-- Delimiter -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
+		<!-- List -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/checklist@latest"></script>
+		<!-- Checklist -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
+		<!-- Quote -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/code@latest"></script>
+		<!-- Code -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script>
+		<!-- Embed -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/table@latest"></script>
+		<!-- Table -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/link@latest"></script>
+		<!-- Link -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/warning@latest"></script>
+		<!-- Warning -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest"></script>
+		<!-- Marker -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest"></script>
+		<!-- Inline Code -->
+		<script src="simple-image.js"></script>
+		<!-- <script src="download_pdf.js"></script> -->
+		<link href="simple-image.css" rel="stylesheet" />
+		<script>
+			window.jsPDF = window.jspdf.jsPDF;
+		</script>
+	</head>
+
+	<body>
+		<div id="editorjs" style="max-width: 1000px; margin: 0 auto"></div>
+
+		<button id="save-button">Save as JSON</button>
+		<button id="save-pdf">Save as PDF</button>
+		<pre id="output"></pre>
+	</body>
+
+	<script>
+		const editor = new EditorJS({
+			autofocus: true,
+			holder: "editorjs",
+			tools: {
+				header: {
+					class: Header,
+					inlineToolbar: ["link"],
+					config: {
+						placeholder: "Header",
+					},
+					shortcut: "CMD+SHIFT+H",
+				},
+				image: SimpleImage,
+				list: {
+					class: List,
+					inlineToolbar: true,
+					shortcut: "CMD+SHIFT+L",
+				},
+				checklist: {
+					class: Checklist,
+					inlineToolbar: true,
+				},
+				quote: {
+					class: Quote,
+					inlineToolbar: true,
+					config: {
+						quotePlaceholder: "Enter a quote",
+						captionPlaceholder: "Quote's author",
+					},
+					shortcut: "CMD+SHIFT+O",
+				},
+
+				warning: Warning,
+
+				marker: {
+					class: Marker,
+					shortcut: "CMD+SHIFT+M",
+				},
+
+				code: {
+					class: CodeTool,
+					shortcut: "CMD+SHIFT+C",
+				},
+
+				delimiter: Delimiter,
+
+				inlineCode: {
+					class: InlineCode,
+					shortcut: "CMD+SHIFT+C",
+				},
+
+				linkTool: LinkTool,
+
+				embed: Embed,
+
+				table: {
+					class: Table,
+					inlineToolbar: true,
+					shortcut: "CMD+ALT+T",
+				},
+			},
+		});
+
+		const saveButton = document.getElementById("save-button");
+		const output = document.getElementById("output");
+
+		saveButton.addEventListener("click", () => {
+			editor.save().then((savedData) => {
+				var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(savedData));
+				$('<a href="data:' + data + '" download="data.json">download JSON</a>');
+			});
+		});
+
+		const doc = new jsPDF();
+
+		const savePDFButton = document.getElementById("save-pdf");
+		savePDFButton.addEventListener("click", () => {
+			doc.fromHTML(document.getElementById("editorjs").innerHTML, 15, 15);
+			doc.save("sample.pdf");
+		});
+	</script>
+</html>
